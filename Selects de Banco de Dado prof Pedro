@@ -1,0 +1,171 @@
+-- Vitor Boer RA-132695-2023
+-- João Victor Duarte RA-130142-2023
+-- Natan Augusto Ganda de Oliveira 125651-2023
+
+-- Atividade 1
+SELECT 
+    "Nome" AS "Nome do Candidato",
+    "NomeUrna" AS "Nome na Urna",
+    "DataNascimento" AS "Data de Nascimento"
+FROM "Candidato"
+ORDER BY "PartidoId" ASC, "NomeUrna" ASC; 
+
+
+-- Atividade 2
+SELECT 
+    c."Nome" AS "Nome do Candidato",
+    c."NomeUrna" AS "Nome na Urna",
+    p."Sigla" AS "Sigla do Partido"
+FROM 
+    "Candidato" c
+JOIN 
+    "Partido" p ON c."PartidoId" = p."Id"
+ORDER BY 
+    p."Sigla" ASC,
+    c."NomeUrna" ASC;
+
+   
+-- Atividade 3 
+SELECT 
+    c."Nome" AS "Nome do Candidato",
+    c."NomeUrna" AS "Nome na Urna",
+    p."Sigla" AS "Sigla do Partido",
+    st."Nome" AS "Situação no Turno",
+    cr."Nome" AS "Cargo"
+FROM 
+    "Candidato" c
+JOIN 
+    "Partido" p ON c."PartidoId" = p."Id"
+JOIN 
+    "Cargo" cr ON c."CargoId" = cr."Id"
+JOIN
+	"SituacaoTurno" st ON c."SituacaoTurnoId" = st."Id"
+WHERE 
+    cr."Nome" = 'Prefeito'
+ORDER BY 
+    c."NomeUrna" ASC;
+   
+   
+-- Atividade 4 
+SELECT 
+    cr."Nome" AS "Nome do Cargo",
+    COUNT(c."Id") AS "Quantidade de Candidatos"
+FROM 
+    "Candidato" c
+JOIN 
+    "Cargo" cr ON c."CargoId" = cr."Id"
+GROUP BY 
+    cr."Nome"
+ORDER BY 
+    cr."Nome" ASC;
+   
+   
+-- Atividade 5
+SELECT 
+    c."Nome" AS "Nome do Candidato",
+    c."NomeUrna" AS "Nome na Urna",
+    c."DataNascimento" AS "Data de Nascimento"
+FROM 
+    "Candidato" c
+WHERE 
+    c."DataNascimento" BETWEEN '1980-01-01' AND '1989-12-31'
+ORDER BY 
+    c."DataNascimento" ASC;
+   
+   
+-- Atvidade 6
+SELECT 
+    c."NomeUrna" AS "Nome na Urna",
+    c."Numero" AS "Número",
+    cr."Nome" AS "Cargo",
+    p."Sigla" AS "Sigla do Partido"
+FROM 
+    "Candidato" c
+JOIN 
+    "Partido" p ON c."PartidoId" = p."Id"
+JOIN 
+    "Cargo" cr ON c."CargoId" = cr."Id"
+WHERE 
+    cr."Nome" = 'Vereador' 
+    AND p."Sigla" IN ('DEM', 'PSL', 'PR', 'PC do B', 'PDT')
+ORDER BY 
+    p."Sigla" ASC,
+    c."NomeUrna" ASC;
+   
+   
+-- Atividade 7
+SELECT 
+    c."NomeUrna" AS "Nome na Urna",
+    c."Nome" AS "Nome do Candidato",
+    p."Sigla" AS "Sigla do Partido",
+    st."Nome" AS "Situação Turno",
+    c."Numero" AS "Número"
+FROM 
+    "Candidato" c
+JOIN 
+    "Partido" p ON c."PartidoId" = p."Id"
+JOIN 
+    "SituacaoTurno" st ON c."SituacaoTurnoId" = st."Id"
+JOIN 
+    "Cargo" cr ON c."CargoId" = cr."Id"
+WHERE 
+    st."Nome" = 'Suplente' 
+    AND cr."Nome" = 'Prefeito';
+   
+-- Atividade 8 
+   
+SELECT 
+    cr."Nome" AS "Cargo",
+    p."Sigla" AS "Partido",
+    COUNT(c."Id") AS "Quantidade de Candidatos",
+    ROUND((COUNT(c."Id") * 100.0 / SUM(COUNT(c."Id")) OVER (PARTITION BY cr."Nome")), 2) AS "Percentual"
+FROM 
+    "Candidato" c
+JOIN 
+    "Partido" p ON c."PartidoId" = p."Id"
+JOIN 
+    "Cargo" cr ON c."CargoId" = cr."Id"
+GROUP BY 
+    cr."Nome", p."Sigla"
+ORDER BY 
+    cr."Nome", "Percentual" DESC;
+   
+   
+-- Atividade 1 do grupo 1
+SELECT 
+    c."NomeUrna" AS "Nome na Urna",
+    c."Nome" AS "Nome do Candidato",
+    p."Sigla" AS "Sigla do Partido",
+    c."Numero" AS "Número",
+    se."Nome" AS "Situação Eleitoral",
+    c."Cpf" AS "CPF"
+FROM 
+    "Candidato" c
+JOIN 
+    "Partido" p ON c."PartidoId" = p."Id"
+JOIN 
+    "SituacaoEleitoral" se ON c."SituacaoEleitoralId" = se."Id"
+JOIN 
+    "Cargo" cr ON c."CargoId" = cr."Id"
+WHERE 
+    cr."Nome" = 'Vereador'
+    AND c."Numero" BETWEEN 15000 AND 35000
+ORDER BY 
+    c."Numero";
+   
+
+-- Atividade 2 do grupo 1
+SELECT 
+    c."Nome" AS "Nome do Candidato",
+    c."Numero" AS "Número",
+    p."Sigla" AS "Sigla do Partido",
+    cr."Nome" AS "Cargo"
+FROM 
+    "Candidato" c
+JOIN 
+    "Partido" p ON c."PartidoId" = p."Id"
+JOIN 
+    "Cargo" cr ON c."CargoId" = cr."Id"
+WHERE 
+    cr."Nome" = 'Vereador'
+    AND p."Sigla" IN ('PDT', 'PP', 'PSB', 'PSOL', 'PSTU');
